@@ -19,7 +19,7 @@ void CALLBACK deseneazaScenaMunti();
 
 
 GLUquadricObj *obj;
-static int x = 0, y = 0, camera = 0;
+static int x = 0, y = 0, camera = 0, z = 0; 
 void CALLBACK MutaStanga(void)
 {
 	x = x - 4;
