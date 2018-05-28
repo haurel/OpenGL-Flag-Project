@@ -11,7 +11,7 @@ void CALLBACK display(void);
 void CALLBACK myReshape(GLsizei w, GLsizei h);
 void CALLBACK desenareSteag();
 void CALLBACK desenareBat();
-void CALLBACK desenareScenaSteag();
+void CALLBACK desenareScenaSteag(int scaledX, int scaledYZ, int scaledXX, int translateXone, int translateXtwo);
 void CALLBACK soare();
 void CALLBACK pamant(void);
 void CALLBACK deseneazaMunte(float a, float b, float c);
@@ -23,7 +23,7 @@ void MatriceUmbra(GLfloat puncte[3][3], GLfloat pozSursa[4], GLfloat mat[4][4]);
 
 
 GLUquadricObj *obj;
-static int x = 0, y = 0, camera = 0, z = 0, umbra = 0;
+static int x = 0, y = 0, camera = 0, z = 0, umbra = 0, scaledX = 1, scaledYZ = 1, scaledXX = -1, translateXone = 10 , translateXtwo = 31;
 //GLfloat position[] = { 0.0, 10, 10.0, 1.0 };
 GLfloat position[] = { 80.0, 90, 100.0, 1.0 };
 GLfloat position_umbra[] = { 80.0, 90, -100.0, 1.0 };
@@ -76,16 +76,16 @@ GLfloat ctrlpoints[4][4][3] = {
 */
 GLfloat ctrlpoints[4][4][3] = {
 	{
-		{ -10.5, -10.0, 0.0 },{ -10.5, -5, 4.0 },{ 10.5, -5, 0.0 },{ 10, -10, 2.5 }
+		{ -10.5, -10.0, 1.0 },{ -10.5, -5, 4.0 },{ 10.5, -5, 4.0 },{ 10, -10, 2.5 }
 	},
 	{
-		{ -10.5, -10.5, 2.0 },{ -10.5, 10.0, 4.0 },{ 10.5, 10.0, 2.0 },{ 10.0, -10.5, 2.5 }
+		{ -10.5, -10.5, 2.0 },{ -10.5, 10.0, 6.0 },{ 10.5, 10.0, 6.0 },{ 10.0, -10.5, 4.5 }
 	},
 	{
-		{ -10.5, 10.5, 2.0 },{ -10.5, 15.0, 4.0 },{ 10.5, 15.0, 2.0 },{ 10.0, 10.5, 2.5 }
+		{ -10.5, 10.5, 2.0 },{ -10.5, 15.0, 6.0 },{ 10.5, 15.0, 6.0 },{ 10.0, 10.5, 4.5 }
 	},
 	{
-		{ -10.5, 10.0, 0.0 },{ -10.5, 15.0, 4.0 },{ 10.5, 15.0, 0.0 },{ 10, 10, 2.5 }
+		{ -10.5, 10.0, 1.0 },{ -10.5, 15.0, 4.0 },{ 10.5, 15.0, 4.0 },{ 10, 10, 2.5 }
 	}
 };
 
@@ -146,7 +146,7 @@ void CALLBACK display(void)
 		glLightfv(GL_LIGHT0, GL_POSITION, position);
 		umbra = 0;
 		glRotatef((GLfloat)camera, 1, 0, 0);
-		desenareScenaSteag();
+		desenareScenaSteag(scaledX, scaledYZ, scaledXX, translateXone, translateXtwo);
 	glPopMatrix();
 
 
@@ -165,7 +165,7 @@ void CALLBACK display(void)
 			umbra = 1;
 			//glScalef(1, 1, 1);
 			//desenareScenaSteag();
-			desenareScenaSteag();
+			desenareScenaSteag(scaledX, scaledYZ, scaledXX, translateXone, translateXtwo);
 		glPopMatrix();
 		//se deseneaza soarele
 		glPushMatrix();
@@ -234,13 +234,13 @@ void CALLBACK desenareBat()
 	glEnd();
 }
 
-void CALLBACK desenareScenaSteag()
+void CALLBACK desenareScenaSteag(int scaledX, int scaledYZ, int scaledXX, int translateXone, int translateXtwo)
 {	
 	//Bat
 	glPushMatrix();
 		if(umbra == 0)glColor3f(0.545, 0.271, 0.075);
 		else glColor3f(0.0, 0.0, 0.0);
-		glTranslatef(-23, -80.0, 1.0);
+		glTranslatef(-23, -80.0, 4.0);
 		desenareBat();
 		glPopMatrix();
 		glLineWidth(1); // reset line
@@ -249,7 +249,8 @@ void CALLBACK desenareScenaSteag()
 	glPushMatrix();
 		if(umbra == 0)glColor3f(0.0, 0.0, 1.0);
 		else glColor3f(0.0, 0.0, 0.0);
-		glTranslatef(-10, -40.0, 3.0);
+		glTranslatef(-10, -40.0, 3.0); // 
+		glScaled(scaledX, scaledYZ, scaledYZ);
 		desenareSteag();
 		glPopMatrix();
 
@@ -258,8 +259,8 @@ void CALLBACK desenareScenaSteag()
 	glPushMatrix();
 		if(umbra == 0) glColor3f(1.0, 1.0, 0.0);
 		else glColor3f(0.0, 0.0, 0.0);
-		glTranslatef(10, -40.0, 3.0);
-		glScaled(-1, 1, 1);
+		glTranslatef(translateXone, -40.0, 3.0); // 10 C = -1 , 11 C = 1
+		glScaled(scaledXX, scaledYZ, scaledYZ);
 		desenareSteag();
 		glPopMatrix();
 
@@ -267,7 +268,8 @@ void CALLBACK desenareScenaSteag()
 	glPushMatrix();
 		if(umbra == 0)glColor3f(1.0, 0.0, 0.0);
 		else glColor3f(0.0, 0.0, 0.0);
-		glTranslatef(31, -40.0, 3.0);
+		glTranslatef(translateXtwo, -40.0, 3.0); // 31.2 C = 1, 31 C = -1
+		glScaled(scaledX, scaledYZ, scaledYZ);
 		desenareSteag();
 	glPopMatrix();
 
@@ -397,6 +399,21 @@ void MatriceUmbra(GLfloat puncte[3][3], GLfloat pozSursa[4], GLfloat mat[4][4])
 
 }
 
+void CALLBACK animatie_steag()
+{
+	if (scaledX == 1 && scaledXX == -1) {
+		scaledX = -1; scaledXX = 1;
+		translateXone = 11; translateXtwo = 31.2;
+		display();
+		Sleep(80);
+	}else if(scaledX == -1 && scaledXX == 1){
+		scaledX = 1; scaledXX = -1;
+		translateXone = 10; translateXtwo = 31;
+		display();
+		Sleep(80);
+	}
+}
+
 int main(int argc, char** argv)
 {
 	auxInitDisplayMode(AUX_DOUBLE | AUX_RGB);
@@ -406,7 +423,7 @@ int main(int argc, char** argv)
 	auxKeyFunc(AUX_LEFT, MutaStanga);
 	auxKeyFunc(AUX_RIGHT, MutaDreapta);
 	auxKeyFunc(AUX_DOWN, cameraa);
-	//auxIdleFunc(animatie_steag);
+	auxIdleFunc(animatie_steag);
 	auxReshapeFunc(myReshape);
 	auxMainLoop(display);
 	return(0);
